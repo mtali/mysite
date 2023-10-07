@@ -4,10 +4,29 @@
 
 {% block content %}
     <h1>My blog</h1>
+    {% if tag %}
+        <h2>Posts tagged with {{ tag.name }}</h2>
+    {% endif %}
+
     {% for post in posts %}
         <h2>
             <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
         </h2>
+        <p class="tags">
+            {% with post.tags.all as tags %}
+                {% if tags %}
+                    Tags:
+                    {% for tag in tags %}
+                        <a href="{% url "blog:post_list_by_tag" tag.slug %}}">
+                            {{ tag.name }}
+                        </a>
+                        {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+
+        </p>
         <p class="date">
             Published {{ post.publish }} by {{ post.author }}
         </p>
@@ -16,5 +35,5 @@
         </p>
     {% endfor %}
 
-    {% include "pagination.html" with page=page_obj %}
+    {% include "pagination.html" with page=posts %}
 {% endblock %}
