@@ -4,59 +4,182 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-    <h1>{{ post.title }}</h1>
-    <p class="date">
-        Published {{ post.publish|date:"F j, Y" }} by {{ post.author }}
-    </p>
-    <p>
-        {{ post.body|markdown }}
-    </p>
+    <div class="border-b border-grey-lighter pb-8 sm:pb-12">
+        {% for tag in post.tags.all %}
+            <span class="inline-block border rounded-full px-2 py-1 font-body text-sm text-green sm:mb-4">{{ tag.name }}</span>
+        {% endfor %}
 
-    <p>
-        <a href="{% url 'blog:post_share' post.id %}">Share this post</a>
-    </p>
-
-    {% with comments.count as total_comments %}
-        <h2>
-            {{ total_comments }} comment{{ total_comments|pluralize }}
+        <h2 class="block font-body text-3xl font-semibold leading-tight text-primary dark:text-white sm:text-4xl md:text-5xl">
+            {{ post.title }}
         </h2>
-    {% endwith %}
-    {% for comment in comments %}
-        <div class="comment">
-            <p class="info">
-                Comment {{ forloop.counter }} by {{ comment.name }}
-                {{ comment.created }}
+        <div class="flex items-center pt-5 sm:pt-8">
+            <p class="pr-2 font-body font-light text-primary dark:text-white">
+                {{ post.publish }}
             </p>
-            <p>
-                {{ comment.body|linebreaks }}
-            </p>
+        </div>
+    </div>
+
+    <div class="pt-8">
+        {{ post.body|markdown }}
+    </div>
+
+    <section class="bg-white dark:bg-gray-900 py-8 lg:py-16 antialiased">
+        <div class="max-w-2xl mx-auto px-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">Comments
+                    ({{ comments.count }})</h2>
+            </div>
+            <form class="mb-6" method="post">
+                <!--Name-->
+                <div class="mb-4">
+                    <div class=" px-4  bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                        <label for="name" class="sr-only">Name</label>
+                        <input
+                                id="name"
+                                name="name"
+                                type="text"
+                                class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none"
+                                placeholder="Name" required/>
+                    </div>
+                    {% for error in comment_form.name.errors %}
+                        <p class="pl-4 text-red-600 text-sm">{{ error }}</p>
+                    {% endfor %}
+
+                </div>
+                <!--Email-->
+                <div class="mb-4">
+                    <div class="px-4 bg-white rounded-lg rounded-t-lg border border-gray-200">
+                        <label for="email" class="sr-only">Email</label>
+                        <input
+                                id="email"
+                                type="email"
+                                name="email"
+                                class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none"
+                                placeholder="Email" required/>
+                    </div>
+                    {% for error in comment_form.email.errors %}
+                        <p class="pl-4 text-red-600 text-sm">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <!--Body-->
+                <div class="mb-4">
+                    <div class="px-4 bg-white rounded-lg rounded-t-lg border border-gray-200">
+                        <label for="body" class="sr-only">Comment</label>
+                        <textarea id="body"
+                                  rows="6"
+                                  name="body"
+                                  class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+                                  placeholder="Write a comment..." required></textarea>
+                    </div>
+
+                    {% for error in comment_form.body.errors %}
+                        <p class="pl-4 text-red-600 text-sm">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+
+                {% csrf_token %}
+
+                <button type="submit"
+                        class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-600 hover:bg-blue-700 rounded">
+                    COMMENT
+                </button>
+
+                {{ cr }}
+            </form>
+
+            {% for comment in comments %}
+                <article class="text-base bg-white rounded-lg dark:bg-gray-900 py-6">
+                    <footer class="flex justify-between items-center mb-2">
+                        <div class="flex items-center">
+                            <p class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-bold">
+                                {{ comment.name }}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                <time>{{ comment.updated_at }}</time>
+                            </p>
+                        </div>
+                    </footer>
+                    <p class="text-gray-500 dark:text-gray-400">{{ comment.body }}</p>
+                </article>
+            {% empty %}
+                <p>There is no comments yet.</p>
+            {% endfor %}
 
         </div>
-    {% empty %}
-        <p>There is no comments yet.</p>
-    {% endfor %}
-
-    {% if new_comment %}
-        <h2>Your comment has been added</h2>
-    {% else %}
-        <h2>Add new comment</h2>
-        <form method="post">
-            {{ comment_form.as_p }}
-            {% csrf_token %}
-            <p><input type="submit" value="Add comment"/></p>
-        </form>
-    {% endif %}
+    </section>
 
 
-    <h2>Similar posts</h2>
-    {% for post in similar_posts %}
-        <p>
-            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-        </p>
-    {% empty %}
-        <p>
-            There is no similar posts yet
-        </p>
-    {% endfor %}
+    <h2 class="text-3xl font-semibold leading-tight">Similar posts</h2>
+    <ul class="list-disc">
+        {% for post in similar_posts %}
+            <li class="ml-6 py-2"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></li>
+        {% empty %}
+            <p>There is no similar posts yet</p>
+        {% endfor %}
+    </ul>
+
+
+
 
 {% endblock %}
+
+
+
+{#{% block content %}#}
+{#    <h1>{{ post.title }}</h1>#}
+{#    <p class="date">#}
+{#        Published {{ post.publish|date:"F j, Y" }} by {{ post.author }}#}
+{#    </p>#}
+{#    <p>#}
+{#        {{ post.body|markdown }}#}
+{#    </p>#}
+{##}
+{#    <p>#}
+{#        <a href="{% url 'blog:post_share' post.id %}">Share this post</a>#}
+{#    </p>#}
+{##}
+{#    {% with comments.count as total_comments %}#}
+{#        <h2>#}
+{#            {{ total_comments }} comment{{ total_comments|pluralize }}#}
+{#        </h2>#}
+{#    {% endwith %}#}
+{#    {% for comment in comments %}#}
+{#        <div class="comment">#}
+{#            <p class="info">#}
+{#                Comment {{ forloop.counter }} by {{ comment.name }}#}
+{#                {{ comment.created }}#}
+{#            </p>#}
+{#            <p>#}
+{#                {{ comment.body|linebreaks }}#}
+{#            </p>#}
+{##}
+{#        </div>#}
+{#    {% empty %}#}
+{#        <p>There is no comments yet.</p>#}
+{#    {% endfor %}#}
+{##}
+{#    {% if new_comment %}#}
+{#        <h2>Your comment has been added</h2>#}
+{#    {% else %}#}
+{#        <h2>Add new comment</h2>#}
+{#        <form method="post">#}
+{#            {{ comment_form.as_p }}#}
+{#            {% csrf_token %}#}
+{#            <p><input type="submit" value="Add comment"/></p>#}
+{#        </form>#}
+{#    {% endif %}#}
+{##}
+{##}
+{#    <h2>Similar posts</h2>#}
+{#    {% for post in similar_posts %}#}
+{#        <p>#}
+{#            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>#}
+{#        </p>#}
+{#    {% empty %}#}
+{#        <p>#}
+{#            There is no similar posts yet#}
+{#        </p>#}
+{#    {% endfor %}#}
+{##}
+{#{% endblock %}#}

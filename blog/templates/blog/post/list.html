@@ -4,37 +4,29 @@
 {% block title %}My Blog{% endblock %}
 
 {% block content %}
-    <h1>My blog</h1>
-    {% if tag %}
-        <h2>Posts tagged with {{ tag.name }}</h2>
-    {% endif %}
+    <form method="get" class="flex flex-col mb-5 sm:flex-row">
+        <label for="query" class="hidden">Search</label>
+        <input
+                type="text"
+                id="query"
+                placeholder="Search for a post"
+                autocomplete="off"
+                name="query"
+                value="{% if query %}{{ query }}{% endif %}"
+                class="grow rounded-l-md"/>
+        <button type="submit" class="px-10 py-4 font-bold text-xl font-semibold bg-blue-700 text-white rounded-r-md">
+            Search
+        </button>
+    </form>
 
-    <p><a href="{% url 'blog:post_search' %}">Search for posts</a></p>
+    <div class="pt-8 lg:pt-8">
+        {% for post in posts %}
+            {% include 'blog/post/_post.html' %}
+        {% empty %}
+            <p>No available posts</p>
+        {% endfor %}
+    </div>
 
-    {% for post in posts %}
-        <h2>
-            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-        </h2>
-        <p class="tags">
-            {% with post.tags.all as tags %}
-                {% if tags %}
-                    Tags:
-                    {% for tag in tags %}
-                        <a href="{% url "blog:post_list_by_tag" tag.slug %}}">
-                            {{ tag.name }}
-                        </a>
-                        {% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-        </p>
-        <p class="date">
-            Published {{ post.publish }} by {{ post.author }}
-        </p>
-        <p>
-            {{ post.body|markdown|truncatewords:30|linebreaks }}
-        </p>
-    {% endfor %}
+    {% include "blog/pagination.html" with page=posts %}
 
-    {% include "pagination.html" with page=posts %}
 {% endblock %}

@@ -1,0 +1,16 @@
+<div class="border-b border-grey-lighter pb-4 mb-6">
+
+    {% for tag in post.tags.all %}
+        <span class="inline-block font-bold px-2 py-1 border rounded-full"><a href="">{{ tag.name }}</a></span>
+    {% endfor %}
+
+    <a href="{{ post.get_absolute_url }}"
+       class="mt-2 block font-body text-lg font-semibold transition-colors hover:text-green dark:text-white dark:hover:text-secondary">
+        {{ post.title }}
+    </a>
+    <div class="flex items-center pt-4">
+        <p class="pr-2 font-body font-light text-primary dark:text-white">
+            Published {{ post.publish }} by {{ post.author }}
+        </p>
+    </div>
+</div>

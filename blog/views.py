@@ -3,19 +3,28 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
-from taggit.models import Tag
 
 from blog.forms import EmailForm, CommentForm, SearchForm
 from blog.models import Post
 
 
-def post_list(request, tag_slug=None):
-    object_list = Post.published.all()
-    tag = None
-    if tag_slug:
-        tag = get_object_or_404(Tag, slug=tag_slug)
-        object_list = object_list.filter(tags__contains=tag)
-    paginator = Paginator(object_list, 3)  # 3 posts in each page
+def post_list(request):
+    form = SearchForm()
+    query = None
+    results = []
+    if 'query' in request.GET and request.GET.get('query'):
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            search_vector = (SearchVector('title', weight="A") +
+                             SearchVector('body', weight="B"))
+            search_query = SearchQuery(query)
+            results = Post.published.annotate(search=search_vector, rank=SearchRank(search_vector, search_query)) \
+                .filter(rank__gte=0.3).order_by('-rank')
+    else:
+        results = Post.published.all()
+
+    paginator = Paginator(results, 3)
     page = request.GET.get('page')
     try:
         posts = paginator.page(page)
@@ -23,10 +32,12 @@ def post_list(request, tag_slug=None):
         posts = paginator.page(1)
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
+
     return render(request, 'blog/post/list.html', {
         'page': page,
         'posts': posts,
-        'tag': tag
+        'tag': None,
+        'query': query
     })
 
 
@@ -84,23 +95,5 @@ def post_share(request, post_id):
     })
 
 
-def post_search(request):
-    form = SearchForm()
-    query = None
-    results = []
-    if 'query' in request.GET:
-        form = SearchForm(request.GET)
-        if form.is_valid():
-            query = form.cleaned_data['query']
-            search_vector = (SearchVector('title', weight="A") +
-                             SearchVector('body', weight="B"))
-
-            search_query = SearchQuery(query)
-            results = Post.published.annotate(search=search_vector, rank=SearchRank(search_vector, search_query)) \
-                .filter(rank__gte=0.3).order_by('-rank')
-
-    return render(request, 'blog/post/search.html', {
-        'form': form,
-        'query': query,
-        'results': results
-    })
+def intro(request):
+    return render(request, 'blog/intro.html')

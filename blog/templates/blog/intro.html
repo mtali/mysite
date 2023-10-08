@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Intro
+{% endblock %}
+
+{% block content %}
+    <div class="border-b border-grey-lighter pb-8">
+        <div>
+            <img src="https://avatars.githubusercontent.com/u/29874428?v=4" class="rounded-full h-16 w-16" alt="author">
+        </div>
+        <h1 class="pt-3 font-body text-4xl font-semibold text-primary dark:text-white md:text-5xl lg:text-6xl">
+            Hi, I’m Emmanuel Mtali
+        </h1>
+        <p class="pt-3 font-body text-xl font-light text-primary dark:text-white">
+            Hi, I'm a software engineer with over five years of experience in creating software applications. Explore my
+            portfolio to see my work!"
+        </p>
+        <a href="/"
+           class="mt-12 block bg-blue-600 px-10 py-4 text-center font-body text-xl font-semibold text-white transition-colors hover:bg-green sm:inline-block sm:text-left sm:text-2xl">
+            Say Hello!
+        </a>
+    </div>
+
+    <!--My Story-->
+    <div class="border-b border-grey-lighter py-16 lg:py-20">
+        <div class="flex items-center pb-6">
+            <i class="fa-solid fa-meteor text-yellow-400"></i>
+            <h3 class="ml-3 font-body text-2xl font-semibold text-primary dark:text-white">
+                My Story
+            </h3>
+        </div>
+        <div>
+            <p class="font-light">In 2013, I embarked on my software engineering journey, writing my first Java program
+                to calculate the
+                area of a triangle, a small step that ignited my passion for technology. Today, I stand as a full-stack
+                software engineer with a track record of impactful projects, ranging from web, mobile and games.</p>
+            <ul class="list-disc pl-10 font-light">
+                <li class="py-2">I developed a USSD payment application using Python and Django, adopted nationally in
+                    Tanzania for
+                    DStv, processing over 2.5K+ transactions daily.
+                </li>
+                <li class="py-2">I aggregated various mobile and banking payment services in Tanzania (Vodacom, Airtel,
+                    Tigo,
+                    Halotel, and Selcom) into a robust API gateway, facilitating payments for the MyDStv app with 5M+
+                    downloads.
+                </li>
+                <li class="py-2">I ventured into game development, creating entertaining experiences using Java, Libgdx,
+                    and Godot.
+                </li>
+                <li class="py-2">As an Associate Android Developer, my Android app development skills, powered by
+                    Kotlin, contributed
+                    to a distributed network of charging stations in Tanzania and Nigeria, providing power solutions for
+                    entire homes and communities.
+                </li>
+                <li class="py-2">During my spare time, I designed a personal Android app in Kotlin for playing podcasts
+                    from the
+                    internet.
+                </li>
+                <li class="py-2">My dedication to excellence earned me the title of Best Student for four consecutive
+                    years.
+                </li>
+            </ul>
+            <p class="font-light">These accomplishments reflect my commitment to pushing boundaries and delivering
+                innovative solutions
+                across various domains of software engineering.</p>
+
+        </div>
+    </div>
+
+    <!--Projects-->
+    <div>
+        <div class="pt-15 lg:pt-20">
+            <div class="flex items-center pb-6">
+                <i class="fa-solid fa-diagram-project text-blue-400"></i>
+                <h3 class="ml-3 font-body text-2xl font-semibold text-primary dark:text-white">
+                    My Projects
+                </h3>
+            </div>
+
+            <div>
+                <a class="mb-6 flex items-center justify-between border border-gray-200 px-4 py-4 sm:px-6"
+                   href="#">
+                    <div class="w-9/10 pr-8">
+                        <h4 class="font-bold text-lg font-semibold">DStv USSD System (*150*53#)</h4>
+                        <p class="font-bold font-light">USSD system used in Tanzania to pay for TV package @ Mobile
+                            Power</p>
+                    </div>
+                    <span class="w-1/10">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </span>
+                </a>
+
+                <a class="mb-6 flex items-center justify-between border border-gray-200 px-4 py-4 sm:px-6"
+                   href="#">
+                    <div class="w-9/10 pr-8">
+                        <h4 class="font-bold text-lg font-semibold">StarApp</h4>
+                        <p class="font-bold font-light">Android application for managing fleet of solar energy hubs @
+                            Jaza Energy</p>
+                    </div>
+                    <span class="w-1/10">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </span>
+                </a>
+            </div>
+        </div>
+
+
+    </div>
+
+{% endblock %}
+

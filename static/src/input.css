@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.container {
+    max-width: 600px;
+
+    @screen sm {
+        max-width: 700px;
+    }
+
+    @screen md {
+        max-width: 850px;
+    }
+}
