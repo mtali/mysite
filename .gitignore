@@ -114,3 +114,4 @@ GitHub.sublime-settings
 .history
 
 /node_modules
+/static/CACHE
