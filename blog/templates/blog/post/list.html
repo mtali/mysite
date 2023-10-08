@@ -9,6 +9,8 @@
         <h2>Posts tagged with {{ tag.name }}</h2>
     {% endif %}
 
+    <p><a href="{% url 'blog:post_search' %}">Search for posts</a></p>
+
     {% for post in posts %}
         <h2>
             <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
@@ -25,8 +27,6 @@
                     {% endfor %}
                 {% endif %}
             {% endwith %}
-
-
         </p>
         <p class="date">
             Published {{ post.publish }} by {{ post.author }}
