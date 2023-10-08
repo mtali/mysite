@@ -115,3 +115,4 @@ GitHub.sublime-settings
 
 /node_modules
 /static/CACHE
+/static/src/output.css
