@@ -5,7 +5,7 @@ from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
 
 from blog.forms import EmailForm, CommentForm, SearchForm
-from blog.models import Post
+from blog.models import Post, Project
 
 
 def post_list(request):
@@ -96,4 +96,12 @@ def post_share(request, post_id):
 
 
 def intro(request):
-    return render(request, 'blog/intro.html')
+    projects = Project.published.all()
+    return render(request, 'blog/intro.html', {
+        'projects': projects
+    })
+
+
+def project_detail(request, slug):
+    project = get_object_or_404(Project, slug=slug, status='published')
+    return render(request, 'blog/project/show.html', {'project': project})

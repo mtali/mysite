@@ -1,6 +1,9 @@
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.text import slugify
+from markdownfield.models import MarkdownField, RenderedMarkdownField
+from markdownfield.validators import VALIDATOR_STANDARD
 from taggit.managers import TaggableManager
 
 
@@ -56,3 +59,42 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.name} on {self.post}'
+
+
+class Project(models.Model):
+    STATUS_CHOICES = (
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+    )
+    title = models.CharField(max_length=100)
+    short_description = models.CharField(max_length=100, null=True, blank=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True)
+    description = MarkdownField(rendered_field='description_rendered', validator=VALIDATOR_STANDARD)
+    description_rendered = RenderedMarkdownField()
+    image = models.ImageField(upload_to='projects/', null=True, blank=True)
+    url = models.URLField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+
+    tags = TaggableManager()
+    published = PublishedManager()
+    objects = models.Manager()
+
+    class Meta:
+        db_table = 'projects'
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        if self.slug:
+            return reverse('show_project', args=[self.slug])
+        return '#'
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(Project, self).save(*args, **kwargs)

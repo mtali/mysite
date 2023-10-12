@@ -47,7 +47,9 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'taggit',
     'django.contrib.postgres',
-    'compressor'
+    'compressor',
+    "markdownfield",
+
 ]
 
 MIDDLEWARE = [
